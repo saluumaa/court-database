@@ -1,40 +1,33 @@
 import { useContext, useEffect, useState } from "react";
 import {motion} from 'framer-motion';
 import { AuthContext } from "../../context/AuthContext";
+import { ArrowLeft } from "react-feather";
 import { Link } from "react-router-dom";
 import apiRequest from "../../utils/apiRequest";
 import Dashboard from "../dashboard/Dashboard";
 
 const Home = () => {
-  const { currentUser, logout } = useContext(AuthContext);
+  const { logout } = useContext(AuthContext);
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [cases, setCases] = useState([]);
 
   useEffect(() => {
-    // if (currentUser) {
       fetchCases();
-    // }
   }, []);
 
   const fetchCases = async () => {
     try {
       setLoading(true);
       let response = await apiRequest.get('/cases');
-      // if(currentUser?.role === 'admin') {
-      //   response = await apiRequest.get('/cases');
-      // }
-      // else {
-      //   response = await apiRequest.get('/cases/myCases');
-      // }
       if (!response.ok) {
         setError(response.data.message);
       }
       setCases(response.data);
       
       setLoading(false);
-      console.log(response.data);
+     
     } catch (error) {
       setError(error.message);
       setLoading(false);
@@ -61,17 +54,22 @@ const Home = () => {
   return (
 
     <div className='flex flex-col justify-center items-center w-full mb-20'>
-      <motion.div className='rounded-lg flex flex-col h-36'
-        initial={{ y: '-100%', opacity: 0 }}
-        animate={{ y: 0 , opacity: 1 }}
-        transition={{ duration: 1 }}
-      >
-        <img src='https://images.pexels.com/photos/6077447/pexels-photo-6077447.jpeg?auto=compress&cs=tinysrgb&w=400'
-          alt='home' className='flex rounded-lg object-cover w-screen lg:mx-auto h-full' />
-        <p className='text-2xl md:text-3xl text-center font-bold text-yellow-500 -mt-10'>
-        <Dashboard />
-        </p>
-      </motion.div>
+      {/* Header */}
+    <div className="w-full  relative bg-green-600 py-20">
+        <div className="absolute inset-0">
+            <img
+              src="./court image.jpg"
+              alt="Contact background"
+              className="w-full h-full object-cover opacity-20"
+            />
+          </div>
+          <div className="relative px-2 sm:px-6 lg:px-8 ">
+          <div className='flex gap-4 justify-end cursor-pointer'>
+           < Dashboard />
+          </div>
+        </div>
+      </div>
+
 
      
 
@@ -142,31 +140,7 @@ const Home = () => {
           </table>
         </motion.div>
       )}
-
-      <div className='flex flex-col items-center justify-center w-full mt-4'>
-        <p className='md:text-2xl text-justify font-bold'>
-          {/* {currentUser ? (
-            <p>
-              Welcome, {currentUser.username} now you can 
-              <span onClick={handleLogout} className='text-yellow-500 px-2 cursor-pointer'>
-                Logout
-              </span> 
-              if you want to.
-            </p>
-          ) : (
-            <div className="">
-            <p>
-              Please login to continue searching
-            
-            <Link to='/login' className='text-yellow-500 pl-2'>
-              Login
-            </Link>
-            </p>
-            </div>
-          )} */}
-        </p>
-       
-      </div>
+     
     </div>
   );
 };
