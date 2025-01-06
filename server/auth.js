@@ -58,14 +58,12 @@ router.put('/change-password', verifyToken, async (req, res) => {
     try {
         const { oldPassword, newPassword } = req.body;
 
-        // Validate input
         if (!oldPassword || !newPassword) {
             return res.status(400).send('Please enter all fields');
         }
 
         const userId = req.user.id;
 
-        // Fetch user from database
         const user = await pool.query(
             'SELECT password FROM users WHERE id = $1',
             [userId]
@@ -75,20 +73,17 @@ router.put('/change-password', verifyToken, async (req, res) => {
             return res.status(404).json({ message: 'User not found.' });
         }
 
-        // Validate old password
         const validPassword = await bcrypt.compare(oldPassword, user.rows[0].password);
         if (!validPassword) {
             return res.status(400).json({ message: 'Old password is incorrect.' });
         }
 
-        // Hash new password and update in the database
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         await pool.query('UPDATE users SET password = $1 WHERE id = $2', [hashedPassword, userId]);
 
-        // Send success response
         return res.status(200).json({ message: 'Password successfully updated.' });
     } catch (err) {
-        console.error(err); // Log error for debugging
+        console.error(err); 
         return res.status(500).send(err.message);
     }
 });

@@ -14,8 +14,6 @@ router.get('/', async (req, res) => {
 });
 
 
-
-
 router.get('/myCases', verifyToken, checkRole(['districtUser', 'regionalUser', 'admin']), async (req, res) => {
     try {
         let court_type;
@@ -44,7 +42,7 @@ router.get('/myCases/:id', verifyToken, checkRole(['districtUser', 'regionalUser
         } else if (req.user.role === 'regionalUser') {
             court_type = 'Regional';
         } else if (req.user.role === 'admin') {
-            court_type = 'Appeal'; // Admin corresponds to the Appeal court
+            court_type = 'Appeal'; 
         }
 
         const myCase = await pool.query('SELECT * FROM cases WHERE id = $1 AND created_by = $2 AND court_type = $3', [id, req.user.id, court_type]);
@@ -108,7 +106,7 @@ router.put('/:id', verifyToken, checkRole(['districtUser', 'regionalUser', 'admi
         } else if (req.user.role === 'regionalUser') {
             court_type = 'Regional';
         } else if (req.user.role === 'admin') {
-            court_type = 'Appeal'; // Admin can only update Appeal Court data
+            court_type = 'Appeal'; 
         }
 
         const query = `UPDATE cases 
@@ -145,21 +143,19 @@ router.delete('/:id', verifyToken, checkRole(['admin', 'districtUser', 'regional
     const { id } = req.params;
 
     try {
-        // Determine the court_type based on the user's role
         let court_type = '';
         if (req.user.role === 'districtUser') {
             court_type = 'District';
         } else if (req.user.role === 'regionalUser') {
             court_type = 'Regional';
         } else if (req.user.role === 'admin') {
-            court_type = 'Appeal'; // Admin can only delete Appeal Court data
+            court_type = 'Appeal'; 
         }
 
-        // Delete only if the case belongs to the user's court
+        
         const query = 'DELETE FROM cases WHERE id = $1 AND court_type = $2 RETURNING *';
         const queryParams = [id, court_type];
 
-        // Execute the delete query
         const deletedCase = await pool.query(query, queryParams);
 
         if (deletedCase.rowCount === 0) {
