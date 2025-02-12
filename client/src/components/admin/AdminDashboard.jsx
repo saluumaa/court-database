@@ -12,8 +12,8 @@ const AdminDashboard = () => {
   const [cases, setCases] = useState([]);
   const [summary, setSummary] = useState({});
   const [pagination, setPagination] = useState({});
-  const [expandedCases, setExpandedCases] = useState({}); // Tracks toggled "Read More"
-
+  const [expandedCases, setExpandedCases] = useState({}); 
+  
   // Fetch all cases for summary data
   const fetchAllCases = async () => {
     try {

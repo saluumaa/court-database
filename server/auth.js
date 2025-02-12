@@ -43,7 +43,12 @@ router.post('/login', async (req, res) => {
             expiresIn: '4w'
         });
         const { password: pass, ...userInfo } = user.rows[0];
-        res.cookie('token', token, { httpOnly: true })
+        res.cookie('token', token, { 
+            httpOnly: true, 
+            sameSite: 'none', 
+            secure: true,
+            maxAge: 1000 * 60 * 60 * 24 * 28
+         })
             .status(200)
             .json(userInfo);
 
